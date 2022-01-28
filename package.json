@@ -1,0 +1,29 @@
+{
+  "name": "7maravillasmern",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bermudezjb/7MaravillasMern.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bermudezjb/7MaravillasMern/issues"
+  },
+  "homepage": "https://github.com/bermudezjb/7MaravillasMern#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mongoose": "^6.1.8",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "dotenv": "^14.3.2"
+  }
+}
