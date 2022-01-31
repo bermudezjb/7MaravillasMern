@@ -7,11 +7,11 @@ const tourSchema = new mongoose.Schema({
     required: true,
   },
   duration: {
-    type: String,
+    type: Number,
     required: true,
   },
   maxGroupSize: {
-    type: String,
+    type: Number,
     required: true,
   },
   difficulty: {
@@ -27,7 +27,7 @@ const tourSchema = new mongoose.Schema({
     default: 0,
   },
   price: {
-    type: String,
+    type: Number,
     required: true,
   },
   summary: {
