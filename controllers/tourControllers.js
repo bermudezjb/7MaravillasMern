@@ -6,20 +6,28 @@ const Tour = require("../models/tourModels");
 //get all tours
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // 1a) filtrado 
+    //page,sort, limit, field
+    //creando una copia de req.query
+
+    const queryObj = {...req.query};
+    const excludeFields = ['page','sort','limit','fields'];
+    excludeFields.forEach(element=>delete queryObj[element])
+
+    
+    const tours = await Tour.find(queryObj);
     res.status(200).json({
-      status: "sucess",
-      results: Tour.length,
-      data: { tours },
+      status: "succes",
+      results: tours.length,
+      data: { tours: tours },
     });
   } catch (error) {
     res.status(400).json({
       status: "fail",
-      message: "error",
+      message: error,
     });
   }
 };
-
 // get tour by id
 exports.getTour = async (req, res) => {
   try {
