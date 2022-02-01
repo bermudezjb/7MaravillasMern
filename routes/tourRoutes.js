@@ -1,7 +1,12 @@
 const router = require("express").Router();
 const tourController = require("../controllers/tourControllers");
-
+const aliasMiddleware = require("../middlewares/aliasTopTours");
 //routes
+
+router
+  .route("/top-5-cheap")
+  .get(aliasMiddleware.aliasTopTours, tourController.getAllTours);
+
 router.route("/").get(tourController.getAllTours).post(tourController.addTour);
 router
   .route("/:id")
