@@ -5,25 +5,27 @@ class ApiFeatures {
     this.queryString = queryString;
   }
 
+  // Methods
+  // Filter method
+
   filter() {
-    // 1a) filtrado
-    //page,sort, limit, field
-    //creando una copia de req.query
+    // BUILD QUERY
+    // 1A) Filtering
+    // Create a req.query copy
 
     const queryObj = { ...this.queryString };
     const excludeFields = ["page", "sort", "limit", "fields"];
     excludeFields.forEach((element) => delete queryObj[element]);
 
-    //filtro avanzado
+    // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // Regular expresion
 
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
-
+  // Sort method
   sort() {
-    //2 sort
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
@@ -33,7 +35,8 @@ class ApiFeatures {
     return this;
   }
 
-  limitfields() {
+  //  Field method
+  limitFields() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
       this.query = this.query.select(fields);
@@ -42,8 +45,8 @@ class ApiFeatures {
     }
     return this;
   }
-  //paginate  method
 
+  // Paginate method
   paginate() {
     const page = this.queryString.page || 1;
     const limit = this.queryString.limit || 2;

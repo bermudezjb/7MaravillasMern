@@ -1,6 +1,9 @@
 //modules
+
 const mongoose = require("mongoose");
+
 // creating Scheme
+
 const tourSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -50,7 +53,11 @@ const tourSchema = new mongoose.Schema({
   },
   startDates: [Date],
 });
+
 //model
+
 const Tour = mongoose.model("Tour", tourSchema);
+
 // export model
+
 module.exports = Tour;
