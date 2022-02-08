@@ -34,9 +34,11 @@ const userSchema = new mongoose.Schema({
       message: "Las contraseñas no coinciden",
     },
   },
+  passwordChangedAt: Date,
 });
 
 // MONGOOSE MIDDLEWARES
+//encrypt password before saving
 userSchema.pre("save", async function (next) {
   // If password field is not modified, run next() and exit the middleware
   if (!this.isModified("password")) return next();
@@ -55,6 +57,20 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(bodyPassword, userPassword);
+};
+
+// check if password change after user was assyng
+userSchema.methods.changePassword = function (JWTtimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTtimestamp < changedTimestamp;
+  }
+
+  // false means NOT changed
+  return false;
 };
 
 // MONGOOSE MODEL

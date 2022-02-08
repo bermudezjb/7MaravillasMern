@@ -1,4 +1,5 @@
 // modules
+const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
@@ -32,7 +33,7 @@ exports.signup = async (req, res) => {
   } catch (error) {
     res.status(404).json({
       status: "fail",
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -66,7 +67,48 @@ exports.login = async (req, res) => {
   } catch (error) {
     res.status(404).json({
       status: "fail",
-      message: error,
+      message: error.message,
+    });
+  }
+};
+
+// protect routes middlewares function
+
+exports.protect = async (req, res, next) => {
+  try {
+    // 1. get user token and check if it exist
+    let token;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) throw new Error("debes iniciar sesión para tener acceso");
+
+    // 2.verify token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3.check if user still exist
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser)
+      throw new Error("el usuario al que pertenece este token ya no existe");
+
+    // 4.check if user changed password
+    if (currentUser.changePassword(decoded.iat))
+      throw new Error(
+        "el usuario cambió la contrasena recientemente, por favor ingresa de nuevo"
+      );
+    // save current user in req.user
+    req.user = currentUser;
+    //finish the middleware and continue
+    next();
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error.message,
     });
   }
 };
