@@ -258,7 +258,6 @@ exports.updatePassword = async (req, res) => {
     });
   }
 };
-
 // update user data
 exports.updateMyData = async (req, res) => {
   try {
