@@ -1,4 +1,5 @@
 // MODULES
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
@@ -18,6 +19,11 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, "El email introducido no es correcto"],
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ["user", "admin", "guide", " lead-guide"],
+    default: "user",
+  },
   password: {
     type: String,
     required: [true, "Introduce una contraseña"],
@@ -35,6 +41,13 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
+  PasswordResetToken: String,
+  PasswordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 // MONGOOSE MIDDLEWARES
@@ -48,6 +61,20 @@ userSchema.pre("save", async function (next) {
 
   // Delete passwordConfirm from document
   this.passwordConfirm = undefined;
+  next();
+});
+
+// upddate passwordChangeAt field middleware
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  // only if password is modfiied, update 'passwordCahngeAt' field with current date + 1 seg
+  this.passwordChangedAt = Date.now() + 1000;
+  next();
+});
+
+// find users with 'active' field set to 'true'only
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: true });
   next();
 });
 
@@ -71,6 +98,21 @@ userSchema.methods.changePassword = function (JWTtimestamp) {
 
   // false means NOT changed
   return false;
+};
+
+// create random token to reset password
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  // set reset token to passwordResetToken  field ecripted
+  this.PasswordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  //set passwordResetExpires
+  this.PasswordResetExpires = Date.now() + 10 * 60 * 1000;
+  console.log(resetToken);
+  console.log(this.PasswordResetExpires);
+  return resetToken;
 };
 
 // MONGOOSE MODEL
