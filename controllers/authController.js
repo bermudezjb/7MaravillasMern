@@ -12,6 +12,7 @@ const signToken = (id) => {
   });
 };
 
+
 // create and send token to client function
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);

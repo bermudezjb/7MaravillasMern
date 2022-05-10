@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(
+      to right bottom,
+      rgba($color-primary-light, 0.8),
+      rgba($color-primary-dark, 0.8)
+    ),
+    url("https://firebasestorage.googleapis.com/v0/b/siete-maravillas-modernas.appspot.com/o/Cristo4.jpg?alt=media&token=79e6e5d6-4bc9-4ad4-816c-ad5bd22d58fd");
+  height: 95vh;
+  background-size: cover;
+  clip-path: polygon(0 0, 100% 0, 100% 86%, 0% 100%);
+}
